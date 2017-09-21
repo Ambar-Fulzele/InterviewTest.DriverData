@@ -9,12 +9,13 @@ namespace InterviewTest.DriverData.Analysers
 	{
         const decimal MINIMUMSPEED = 0, MAXIMUMSPEED = 200, ZEROSPEED = 0;
         
-        public HistoryAnalysis Analyse(IReadOnlyCollection<Period> history)
+        public HistoryAnalysis Analyse(IReadOnlyCollection<Period> history, bool isPenalise)
 		{
             HistoryAnalysis result = new HistoryAnalysis
             {
                 AnalysedDuration = TimeSpan.Zero,
-                DriverRating = 0
+                DriverRating = 0,
+                UnDocumentedPeriod = false
             };
 
             List<HistoryAnalysis> histCollection = new List<HistoryAnalysis>();
@@ -27,6 +28,10 @@ namespace InterviewTest.DriverData.Analysers
             );
 
             result = AnalyserHelper.getFinalRating(histCollection);
+
+            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, TimeSpan.Zero, TimeSpan.Zero);
+
+            result = AnalyserHelper.penaliseAnalyser(result, isPenalise && result.UnDocumentedPeriod);
 
             return result;
         }

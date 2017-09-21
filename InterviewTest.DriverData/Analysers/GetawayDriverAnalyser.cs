@@ -11,12 +11,13 @@ namespace InterviewTest.DriverData.Analysers
         TimeSpan startTime = new TimeSpan(13, 0, 0);
         TimeSpan endTime = new TimeSpan(14, 0, 0);
 
-        public HistoryAnalysis Analyse(IReadOnlyCollection<Period> history)
+        public HistoryAnalysis Analyse(IReadOnlyCollection<Period> history, bool isPenalise)
 		{
             HistoryAnalysis result = new HistoryAnalysis
             {
                 AnalysedDuration = TimeSpan.Zero,
-                DriverRating = 0
+                DriverRating = 0,
+                UnDocumentedPeriod = false
             };
 
             List<HistoryAnalysis> histCollection = new List<HistoryAnalysis>();
@@ -34,14 +35,14 @@ namespace InterviewTest.DriverData.Analysers
 
                 // Start time is out of range and end time is in the range
                 if (h.Start.TimeOfDay < startTime
-                    && h.End.TimeOfDay >= startTime && h.End.TimeOfDay < endTime)
+                    && h.End.TimeOfDay > startTime && h.End.TimeOfDay <= endTime)
                 {
                     // Add valid data to collection for weighted average rating calculation
                     histCollection.Add(getValidHistoryData(h, startTime, h.End.TimeOfDay));
                 }
 
                 // Start time in the range and end time is out of range
-                if (h.Start.TimeOfDay >= startTime && h.Start.TimeOfDay <= endTime
+                if (h.Start.TimeOfDay >= startTime && h.Start.TimeOfDay < endTime
                     && h.End.TimeOfDay > endTime)
                 {
                     // Add valid data to collection for weighted average rating calculation
@@ -57,6 +58,10 @@ namespace InterviewTest.DriverData.Analysers
             });
 
             result = AnalyserHelper.getFinalRating(histCollection);
+
+            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, startTime, endTime);
+
+            result = AnalyserHelper.penaliseAnalyser(result, isPenalise && result.UnDocumentedPeriod);
 
             return result;
         }

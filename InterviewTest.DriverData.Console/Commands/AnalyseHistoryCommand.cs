@@ -11,19 +11,26 @@ namespace InterviewTest.Commands
 		// BONUS: What's great about readonly?
 		private readonly IAnalyser _analyser;
 
-		public AnalyseHistoryCommand(IReadOnlyCollection<string> arguments)
-		{
-			var analysisType = arguments.Single();
+        private bool _penalise = false;
 
-			_analyser = AnalyserLookup.GetAnalyser(analysisType);
+        public AnalyseHistoryCommand(IReadOnlyCollection<string> arguments)
+		{
+			var analysisType = arguments.ElementAt(0);
+
+            _analyser = AnalyserLookup.GetAnalyser(analysisType);
+            
+            if (arguments.Count > 1 && arguments.ElementAt(1) != null && arguments.ElementAt(1).ToLower() == "true")
+                _penalise = true;
 		}
 
 		public void Execute()
 		{
-			var analysis = _analyser.Analyse(CannedDrivingData.History);
-
-			Console.Out.WriteLine($"Analysed period: {analysis.AnalysedDuration:g}");
+            var analysis = _analyser.Analyse(CannedDrivingData.History,_penalise);
+            
+            Console.Out.WriteLine($"Analysed period: {analysis.AnalysedDuration:g}");
 			Console.Out.WriteLine($"Driver rating: {analysis.DriverRating:P}");
-		}
+            Console.Out.WriteLine($"Driver penalise: {_penalise}");
+            Console.Out.WriteLine($"UnDocumented Period: {analysis.UnDocumentedPeriod}");
+        }
 	}
 }

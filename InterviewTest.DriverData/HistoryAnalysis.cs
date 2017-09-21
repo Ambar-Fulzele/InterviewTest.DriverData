@@ -6,5 +6,6 @@ namespace InterviewTest.DriverData
 	{
 		public TimeSpan AnalysedDuration;
 		public decimal DriverRating;
+        public bool UnDocumentedPeriod;
 	}
 }
