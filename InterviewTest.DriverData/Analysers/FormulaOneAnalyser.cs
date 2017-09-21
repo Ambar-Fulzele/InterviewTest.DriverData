@@ -1,14 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace InterviewTest.DriverData.Analysers
 {
 	// BONUS: Why internal?
 	internal class FormulaOneAnalyser : IAnalyser
 	{
-		public HistoryAnalysis Analyse(IReadOnlyCollection<Period> history)
+        const decimal MINIMUMSPEED = 0, MAXIMUMSPEED = 200, ZEROSPEED = 0;
+        
+        public HistoryAnalysis Analyse(IReadOnlyCollection<Period> history)
 		{
-			throw new NotImplementedException();
-		}
-	}
+            HistoryAnalysis result = new HistoryAnalysis
+            {
+                AnalysedDuration = TimeSpan.Zero,
+                DriverRating = 0
+            };
+
+            List<HistoryAnalysis> histCollection = new List<HistoryAnalysis>();
+
+            //Ignore anything before the first non-zero speed in a day, and after the last
+            history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).Reverse().SkipWhile(h => h.AverageSpeed == 0).ToList().ForEach(h =>
+                {
+                    histCollection.Add(getValidHistoryData(h, h.Start.TimeOfDay, h.End.TimeOfDay));
+                }
+            );
+
+            result = AnalyserHelper.getFinalRating(histCollection);
+
+            return result;
+        }
+
+        private HistoryAnalysis getValidHistoryData(Period p, TimeSpan startingTime, TimeSpan endingTime)
+        {
+            HistoryAnalysis histdata = new HistoryAnalysis();
+
+            histdata.AnalysedDuration = (endingTime - startingTime);
+
+            //Speeds between 0 and 200 map linearly to [0,1] and Speeds above 200 map to 1
+            histdata.DriverRating = ((p.AverageSpeed > MAXIMUMSPEED) ? 1 :
+                                            ((p.AverageSpeed <= MAXIMUMSPEED && p.AverageSpeed > MINIMUMSPEED) ? (p.AverageSpeed / MAXIMUMSPEED) : ZEROSPEED));
+
+            return histdata;
+        }
+    }
 }
