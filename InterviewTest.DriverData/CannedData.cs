@@ -13,8 +13,12 @@ namespace InterviewTest.DriverData
 	{
 		private static readonly DateTimeOffset _day = new DateTimeOffset(2016, 10, 13, 0, 0, 0, 0, TimeSpan.Zero);
 
-		// BONUS: What's so great about IReadOnlyCollections?
-		public static readonly IReadOnlyCollection<Period> History = new[]
+        // BONUS: What's so great about IReadOnlyCollections?
+        // IReadOnlyColletion represents strongly-typed, read-only collection of elements. The benefits of ready only is mentioned in AnalyseHistoryCommand class
+        // In our case the data can be defined like below or fetched from the file etc 
+        // and since we don't want this data to be changes over the progrom execution hence IReadOnlyCollections
+
+        public static readonly IReadOnlyCollection<Period> History = new[]
 		{
 			new Period
 			{

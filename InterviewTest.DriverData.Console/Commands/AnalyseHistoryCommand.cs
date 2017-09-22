@@ -10,6 +10,10 @@ namespace InterviewTest.Commands
     public class AnalyseHistoryCommand
     {
         // BONUS: What's great about readonly?
+        // Readonly allow us to define constants at run time, once defined value can not be changed during program execution.
+        // For readonly, We can assign values at runtime through configuration of using other variables thus helps us avoiding changes in program frequently.
+        // In our case the value is not absolute constant but can be changed frequently and is dependent on the argument hence readonly is appropriate choice
+
         private readonly IAnalyser _analyser;
 
         private string _drivingDataFilePath = string.Empty;

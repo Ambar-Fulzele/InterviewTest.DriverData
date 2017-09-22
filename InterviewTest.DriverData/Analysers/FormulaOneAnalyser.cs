@@ -4,8 +4,13 @@ using System.Linq;
 
 namespace InterviewTest.DriverData.Analysers
 {
-	// BONUS: Why internal?
-	internal class FormulaOneAnalyser : IAnalyser
+    // BONUS: Why internal?
+    // With internal, classes are not accessable outside the assembly. The access is limited to the program only and no external program can access these.
+    // This helps in information/implementation hiding.
+    // In our case since all the analyser related operations are happening in single assembly "InterviewTest.DriverData", making this as internal will ensure that 
+    // the classes within same assembly will be able to accessible them but will restirct to use them outside assembly.
+
+    internal class FormulaOneAnalyser : IAnalyser
 	{
         const decimal MINIMUMSPEED = 0, MAXIMUMSPEED = 200, ZEROSPEED = 0;
         
