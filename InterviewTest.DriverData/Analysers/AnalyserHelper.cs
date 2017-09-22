@@ -21,6 +21,9 @@ namespace InterviewTest.DriverData.Analysers
                     DriverRating = 0
                 };
 
+                if (timeInTicks == 0 || histCollection == null)
+                    return histAnalysis;
+
                 if (histCollection.Count > 0)
                 {
                     histCollection.ToList().ForEach(h =>

@@ -11,11 +11,20 @@ namespace InterviewTest.DriverData.Analysers
 		{
             HistoryAnalysis result = new HistoryAnalysis
             {
-                AnalysedDuration = history.Last().End - history.First().Start,
-                DriverRating = 1m,
+                AnalysedDuration = TimeSpan.Zero,
+                DriverRating = 0,
                 UnDocumentedPeriod = false
             };
 
+            if (history == null)
+                return result;
+
+            if (history.Count == 0)
+                return result;
+
+            result.AnalysedDuration = history.Last().End - history.First().Start;
+            result.DriverRating =  1m;
+            
             DateTimeOffset startDate = new DateTimeOffset(history.First().Start.Date);
             DateTimeOffset endDate = new DateTimeOffset(history.Last().End.Date);
 

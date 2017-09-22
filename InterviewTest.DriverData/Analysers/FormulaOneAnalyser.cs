@@ -18,6 +18,12 @@ namespace InterviewTest.DriverData.Analysers
                 UnDocumentedPeriod = false
             };
 
+            if (history == null)
+                return result;
+
+            if (history.Count == 0)
+                return result;
+
             List<HistoryAnalysis> histCollection = new List<HistoryAnalysis>();
 
             //Ignore anything before the first non-zero speed in a day, and after the last
@@ -27,6 +33,9 @@ namespace InterviewTest.DriverData.Analysers
                 }
             );
 
+            if (histCollection.Count == 0 || histCollection == null)
+                return result;
+            
             DateTimeOffset startDate = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).First().Start;
             DateTimeOffset endDate = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).Reverse().SkipWhile(h => h.AverageSpeed == 0).First().End;
 
