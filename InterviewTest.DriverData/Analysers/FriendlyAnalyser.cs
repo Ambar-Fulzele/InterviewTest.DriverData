@@ -16,7 +16,13 @@ namespace InterviewTest.DriverData.Analysers
                 UnDocumentedPeriod = false
             };
 
-            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, history.First().Start.TimeOfDay, history.Last().End.TimeOfDay);
+            DateTimeOffset startDate = new DateTimeOffset(history.First().Start.Date);
+            DateTimeOffset endDate = new DateTimeOffset(history.Last().End.Date);
+
+            DateTime driverStartPeriod = new DateTime(startDate.Year, startDate.Month, startDate.Day, startDate.Hour , startDate.Minute, startDate.Second);
+            DateTime driverEndPeriod = new DateTime(endDate.Year, endDate.Month, endDate.Day, endDate.Hour, endDate.Minute, endDate.Second);
+
+            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, driverStartPeriod, driverEndPeriod);
 
             result = AnalyserHelper.penaliseAnalyser(result, isPenalise && result.UnDocumentedPeriod);
 

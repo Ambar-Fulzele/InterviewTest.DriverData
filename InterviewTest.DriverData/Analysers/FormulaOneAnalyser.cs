@@ -27,9 +27,18 @@ namespace InterviewTest.DriverData.Analysers
                 }
             );
 
-            result = AnalyserHelper.getFinalRating(histCollection);
+            DateTimeOffset startDate = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).First().Start;
+            DateTimeOffset endDate = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).Reverse().SkipWhile(h => h.AverageSpeed == 0).First().End;
 
-            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, TimeSpan.Zero, TimeSpan.Zero);
+            DateTime driverStartPeriod = new DateTime(startDate.Year, startDate.Month, startDate.Day, startDate.Hour, startDate.Minute, startDate.Second);
+            DateTime driverEndPeriod = new DateTime(endDate.Year, endDate.Month, endDate.Day, endDate.Hour, endDate.Minute, endDate.Second);
+
+            //DateTimeOffset driverStartPeriod = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).First().Start;
+            //DateTimeOffset driverEndPeriod = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).Reverse().SkipWhile(h => h.AverageSpeed == 0).First().End;
+
+            result = AnalyserHelper.getFinalRating( histCollection, (endDate-startDate).Ticks);
+
+            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, driverStartPeriod, driverEndPeriod);
 
             result = AnalyserHelper.penaliseAnalyser(result, isPenalise && result.UnDocumentedPeriod);
 

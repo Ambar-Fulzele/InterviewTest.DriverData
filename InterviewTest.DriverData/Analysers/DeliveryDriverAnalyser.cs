@@ -57,9 +57,15 @@ namespace InterviewTest.DriverData.Analysers
                 }
             });
 
-            result = AnalyserHelper.getFinalRating(histCollection);
+            DateTimeOffset startDate = new DateTimeOffset(history.OrderBy(h => h.Start).First().Start.Date);
+            DateTimeOffset endDate = new DateTimeOffset(history.OrderBy(h => h.Start).Last().Start.Date);
 
-            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, startTime, endTime);
+            DateTime driverStartPeriod = new DateTime(startDate.Year, startDate.Month, startDate.Day, startTime.Hours, startTime.Minutes, startTime.Seconds);
+            DateTime driverEndPeriod = new DateTime(endDate.Year, endDate.Month, endDate.Day, endTime.Hours, endTime.Minutes, endTime.Seconds);
+
+            result = AnalyserHelper.getFinalRating(histCollection,(endTime -startTime).Ticks);
+
+            result.UnDocumentedPeriod = AnalyserHelper.getUndocumentedPeriod(history, driverStartPeriod, driverEndPeriod);
 
             result = AnalyserHelper.penaliseAnalyser(result, isPenalise && result.UnDocumentedPeriod);
             

@@ -11,7 +11,7 @@ namespace InterviewTest.DriverData.Analysers
 {
     public static class AnalyserHelper
     {
-        public static HistoryAnalysis getFinalRating(ICollection<HistoryAnalysis> histCollection)
+        public static HistoryAnalysis getFinalRating(ICollection<HistoryAnalysis> histCollection, long timeInTicks)
         {
             try
             { 
@@ -30,7 +30,7 @@ namespace InterviewTest.DriverData.Analysers
                         }
                     );
 
-                    histAnalysis.DriverRating = histAnalysis.DriverRating / histAnalysis.AnalysedDuration.Ticks;
+                    histAnalysis.DriverRating = decimal.Round(histAnalysis.DriverRating / timeInTicks, 4);
                 }
 
                 return histAnalysis;
@@ -41,27 +41,27 @@ namespace InterviewTest.DriverData.Analysers
             }
         }
 
-        public static bool getUndocumentedPeriod(IReadOnlyCollection<Period> history, TimeSpan startTime, TimeSpan endTime)
+        public static bool getUndocumentedPeriod(IReadOnlyCollection<Period> history, DateTime startTime, DateTime endTime)
         {
             try
             {
                 bool undocumentedFlag = false;
 
                 //check if there is undocumented period between first record and starting time
-                if (startTime > TimeSpan.Zero && !undocumentedFlag
-                    && history.OrderBy(h => h.Start).Where(h => h.End.TimeOfDay > startTime).ToList().First().Start.TimeOfDay > startTime)
+                if (!undocumentedFlag
+                    && history.OrderBy(h => h.Start).Where(h => h.End > startTime).ToList().First().Start > startTime)
                     undocumentedFlag = true;
 
                 // To check undocumented period between the records
-                for (int i = 1; i < history.Count && !undocumentedFlag; i++)
+                for (int i = 0; i < history.Count-1 && !undocumentedFlag; i++)
                 {
-                    if (history.OrderBy(h => h.Start).ToList()[i].End.TimeOfDay < history.OrderBy(h => h.Start).ToList()[i + 1].Start.TimeOfDay)
+                    if (history.OrderBy(h => h.Start).ToList()[i].End < history.OrderBy(h => h.Start).ToList()[i + 1].Start)
                         undocumentedFlag = true;
                 }
 
                 //check if there is undocumented period between last record and ending time
-                if (endTime > TimeSpan.Zero && !undocumentedFlag
-                    && history.OrderBy(h => h.Start).Where(h => h.Start.TimeOfDay < endTime).ToList().Last().End.TimeOfDay < endTime)
+                if (!undocumentedFlag
+                    && history.OrderBy(h => h.Start).Where(h => h.Start < endTime).ToList().Last().End < endTime)
                     undocumentedFlag = true;
 
                 return undocumentedFlag;
