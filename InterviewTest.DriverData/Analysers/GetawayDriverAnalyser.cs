@@ -63,7 +63,10 @@ namespace InterviewTest.DriverData.Analysers
                 }
             });
 
-            if (histCollection.Count == 0 || histCollection == null)
+            if (histCollection == null)
+                return result;
+
+            if (histCollection.Count == 0)
                 return result;
 
             DateTimeOffset startDate = new DateTimeOffset(history.OrderBy(h => h.Start).First().Start.Date);

@@ -33,9 +33,12 @@ namespace InterviewTest.DriverData.Analysers
                 }
             );
 
-            if (histCollection.Count == 0 || histCollection == null)
+            if (histCollection == null)
                 return result;
-            
+
+            if (histCollection.Count == 0)
+                return result;
+
             DateTimeOffset startDate = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).First().Start;
             DateTimeOffset endDate = history.OrderBy(h => h.Start).SkipWhile(h => h.AverageSpeed == 0).Reverse().SkipWhile(h => h.AverageSpeed == 0).First().End;
 
