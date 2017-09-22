@@ -47,6 +47,12 @@ namespace InterviewTest.DriverData.Analysers
             {
                 bool undocumentedFlag = false;
 
+                if (!undocumentedFlag && history.Any(h => h.End > startTime) == false)
+                    undocumentedFlag = true;
+
+                if (!undocumentedFlag && history.Any(h => h.Start < endTime) == false)
+                    undocumentedFlag = true;
+
                 //check if there is undocumented period between first record and starting time
                 if (!undocumentedFlag
                     && history.OrderBy(h => h.Start).Where(h => h.End > startTime).ToList().First().Start > startTime)
