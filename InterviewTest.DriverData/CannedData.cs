@@ -1,5 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Linq;
+using System.Xml.Linq;
+using System.Collections.ObjectModel;
 
 namespace InterviewTest.DriverData
 {
@@ -53,5 +59,46 @@ namespace InterviewTest.DriverData
 				AverageSpeed = 0m
 			}
 		};
+
+        public static List<Period> GetDrivingData(string filepath)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(DrivingData));
+
+            FileStream fs = new FileStream(filepath, FileMode.Open);
+            XmlReader reader = XmlReader.Create(fs);
+
+            DrivingData drivingDataObj;
+
+            drivingDataObj = (DrivingData)serializer.Deserialize(reader);
+
+            fs.Close();
+
+            List<Period> periodList = new List<Period>();
+
+            DateTimeOffset dayObj = new DateTimeOffset( drivingDataObj.GSTDate.Year,
+                                                        drivingDataObj.GSTDate.Month,
+                                                        drivingDataObj.GSTDate.Day,
+                                                        drivingDataObj.GSTDate.Hours,
+                                                        drivingDataObj.GSTDate.Minutes,
+                                                        drivingDataObj.GSTDate.Seconds,
+                                                        new TimeSpan(   drivingDataObj.GSTDate.OffsetTime.Hours,
+                                                                        drivingDataObj.GSTDate.OffsetTime.Minutes,
+                                                                        drivingDataObj.GSTDate.OffsetTime.Seconds
+                                                                    )
+                                                        );
+
+            foreach(DrivingDataPeriod dp in drivingDataObj.Period)
+            {
+                Period p = new Period();
+
+                p.Start = dayObj + new TimeSpan(dp.StartTime.Hours, dp.StartTime.Minutes, dp.StartTime.Seconds);
+                p.End = dayObj + new TimeSpan(dp.EndTime.Hours, dp.EndTime.Minutes, dp.EndTime.Seconds);
+                p.AverageSpeed = dp.AverageSpeed;
+
+                periodList.Add(p);
+            }
+                
+            return periodList; ; 
+        }
 	}
 }
