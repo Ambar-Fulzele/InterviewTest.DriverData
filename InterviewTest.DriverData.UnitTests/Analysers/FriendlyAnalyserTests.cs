@@ -34,7 +34,7 @@ namespace InterviewTest.DriverData.UnitTests.Analysers
 				DriverRating = 1m
 			};
 
-			var actualResult = new FriendlyAnalyser().Analyse(data);
+			var actualResult = new FriendlyAnalyser().Analyse(data,false);
 
 			Assert.That(actualResult.AnalysedDuration, Is.EqualTo(expectedResult.AnalysedDuration));
 			Assert.That(actualResult.DriverRating, Is.EqualTo(expectedResult.DriverRating));
